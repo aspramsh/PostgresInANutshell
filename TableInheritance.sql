@@ -1,4 +1,4 @@
-﻿CREATE TABLE events (
+CREATE TABLE events (
     uuid text,
     name text,
     user_id bigint,
@@ -34,3 +34,9 @@ LANGUAGE plpgsql;
 CREATE TRIGGER insert_event_trigger
     BEFORE INSERT ON events
     FOR EACH ROW EXECUTE PROCEDURE event_insert_trigger();
+	
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+INSERT INTO public.events(
+	uuid, name, user_id, account_id, created_at)
+	VALUES (uuid_generate_v4(), 'Birthday Party', 1111111, 2222222, '2019-02-13');

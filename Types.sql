@@ -1,4 +1,4 @@
-﻿--Date, Timestamp
+--Date, Timestamp
 --Postgres
 SELECT to_char('2001-02-03'::DATE, 'FMDay DD Mon YYYY');  --this produces the string "Saturday 03 Feb 2001";
 SELECT to_timestamp('Saturday 03 Feb 2001', 'FMDay DD Mon YYYY');  --this produces the timestamp value 2001-02-03 00:00:00+00;
@@ -14,7 +14,7 @@ SELECT CONVERT(datetime, '2001-02-03T12:34:56.789', 126);  --this produces the d
 
 --Array example
 -- create a table where the values are arrays
-CREATE TABLE holiday_picnic (  
+CREATE TABLE IF NOT EXISTS holiday_picnic (  
      holiday varchar(50), -- single value
      sandwich text[], -- array
      side text[] [], -- multi-dimensional array
@@ -33,6 +33,8 @@ INSERT INTO holiday_picnic VALUES
      '{"fruit cocktail","berry pie","ice cream"}',
      '{"soda","juice","beer","water"}'
      );
+	 
+SELECT * FROM holiday_picnic;
 
 --Hstore
 CREATE EXTENSION hstore;
@@ -92,6 +94,22 @@ CREATE TABLE trails (
      trail_path path
 );
 
+ -- insert a trail into the table
+ -- where the path is defined by lat-long coordinates
+INSERT INTO trails VALUES  
+     ('Dool Trail - Creeping Forest Trail Loop',
+     ('(37.172, -122.22261666667),
+     (37.171616666667, -122.22385),
+     (37.1735, -122.2236),
+     (37.175416666667, -122.223),
+     (37.1758, -122.22378333333),
+     (37.179466666667, -122.22866666667),
+     (37.18395, -122.22675),
+     (37.180783333333, -122.22466666667),
+     (37.176116666667, -122.2222),
+     (37.1753, -122.22293333333),
+     (37.173116666667, -122.22281666667)'));
+
 --Domains
 CREATE TABLE mail_list (
     ID SERIAL PRIMARY KEY,
@@ -113,22 +131,6 @@ CREATE TABLE mail_list (
     last_name contact_name,
     email VARCHAR NOT NULL
 );
-
- -- insert a trail into the table
- -- where the path is defined by lat-long coordinates
-INSERT INTO trails VALUES  
-     ('Dool Trail - Creeping Forest Trail Loop',
-     ('(37.172, -122.22261666667),
-     (37.171616666667, -122.22385),
-     (37.1735, -122.2236),
-     (37.175416666667, -122.223),
-     (37.1758, -122.22378333333),
-     (37.179466666667, -122.22866666667),
-     (37.18395, -122.22675),
-     (37.180783333333, -122.22466666667),
-     (37.176116666667, -122.2222),
-     (37.1753, -122.22293333333),
-     (37.173116666667, -122.22281666667)'));
 
 --user created type
 -- create a new composite type called "wine"

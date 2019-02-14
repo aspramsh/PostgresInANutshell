@@ -1,8 +1,12 @@
-﻿--B-Tree Select rows without index on payment_date and with index
+--B-Tree Select rows without index on payment_date and with index
 --Compare execution time
+CREATE INDEX idx_date_payment
+    ON public.payment USING btree
+    (payment_date);
+	
 EXPLAIN ANALYZE SELECT * 
 	FROM payment 
-	WHERE payment_date < '01-05-2007';
+	WHERE payment_date < '03-05-2007';
 
 --Hash index
 --Here we get an error, because the string is too long
@@ -14,6 +18,18 @@ EXPLAIN ANALYZE SELECT * FROM t_hash WHERE info = (SELECT info FROM t_hash LIMIT
 
 --GIN index
 --Compare performance
+
+CREATE TABLE users(
+	id serial primary key,
+	first_name text,
+	last_name text
+);
+
+INSERT INTO public.users(
+	first_name, last_name)
+		SELECT md5(random()::text), md5(random()::text) FROM
+          (SELECT * FROM generate_series(1,1000000) AS id) AS x;
+
 EXPLAIN ANALYZE SELECT count(*) 
 	FROM users 
 	where first_name ilike '%aeb%';
@@ -34,17 +50,14 @@ CREATE UNIQUE INDEX dmoz_id_idx ON dmoz (id);
 CREATE INDEX dmoz_path_idx ON dmoz USING gist (path);
 
 --We can do inheritance
-EXPLAIN ANALYZE SELECT path FROM dmoz WHERE path < 'Top.Adult';
-
---Full text search
-SELECT path FROM test WHERE path @ 'Astro*% & !pictures@';
+EXPLAIN ANALYZE SELECT path FROM dmoz WHERE path > 'Top.Adult';
 
 --SP-GiST
 CREATE INDEX idx_t_spgist_1 ON t_spgist USING spgist (rg);
 
 EXPLAIN ANALYZE SELECT * FROM t_spgist WHERE rg && int4range(1,100);
 
---BRIN 
+--BRIN
 --1st example
 CREATE TABLE temperature_log (log_id serial, sensor_id int, log_timestamp timestamp without time zone, temperature int);
 
